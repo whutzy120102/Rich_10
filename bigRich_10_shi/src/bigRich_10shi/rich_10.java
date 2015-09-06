@@ -15,6 +15,9 @@ public class rich_10  extends JFrame implements ActionListener
 	JMenu      menu = null;
 	JMenuItem  newGame= null;
 	JMenuItem  exit= null;
+	JMenuItem  help= null;
+	
+	
 	//游戏运行界面
 	JPanel map = null;
 	JButton row = null;
@@ -32,7 +35,6 @@ public class rich_10  extends JFrame implements ActionListener
 	mapElements[] elements = new mapElements[70] ;
 	JTextField numTip=null;
 	JButton sureBomb = null;
-	
 	JButton chooseone = null;//到达礼品屋所进行的选择
 	JButton choosetwo = null;
 	//玩家信息
@@ -56,7 +58,6 @@ public class rich_10  extends JFrame implements ActionListener
 	int[] mine_points = {20,80,100,40,80,60};
 	int result = 0;
 	public static int currentPlayerNum ; 
-	
 	public static int playernumber=0;//玩家人数
 	boolean buyed = false;
 	boolean payed = false;
@@ -87,6 +88,7 @@ public class rich_10  extends JFrame implements ActionListener
 	//监狱确定按钮
 	JButton Sureprison=null;
 
+
 	public static void main(String args[]){
 		rich_10  bigRich = new rich_10();
 	}
@@ -98,11 +100,14 @@ public class rich_10  extends JFrame implements ActionListener
 		  newGame = new JMenuItem("开始游戏");
 		  newGame.addActionListener(this);
 		  newGame.setActionCommand("newgame");
+		  help = new JMenuItem("帮助");
+		  help.addActionListener(this);
+		  help.setActionCommand("help");
 		  exit = new JMenuItem("退出游戏");
 		  exit.addActionListener(this);
 		  exit.setActionCommand("exit");
 		  
-		  menu.add(newGame); menu.add(exit);
+		  menu.add(newGame);    menu.add(exit);   menu.add(help);
 		  menuBar.add(menu);
 		  
 		  start = new startUi();
@@ -123,9 +128,10 @@ public class rich_10  extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getActionCommand().equals("row")){
-			//int  num  = (int)(Math.random()*6)+1;
-			int num =49;
+			int  num  = (int)(Math.random()*6)+1;
+			//int num =49;
 			numTip.setFont(new Font("",1,20));
+
 			numTip.setText(num+"");
 			int nextPosition =players[currentPlayerNum%playerNum.getPlayerNumber()].getLocation()+num;
 			if(nextPosition>69){
@@ -167,6 +173,10 @@ public class rich_10  extends JFrame implements ActionListener
 			  this.remove(start);
 			  this.add(selectPlarerNum);
 			  this.setVisible(true);
+		}
+		if(e.getActionCommand().equals("help")){
+			 ShowHelpInformation helpInformation = new ShowHelpInformation();
+			 //helpInformation.setVisible(true);
 		}
 		if(e.getActionCommand().equals("exit")){
 			System.exit(-1);
@@ -348,6 +358,9 @@ public class rich_10  extends JFrame implements ActionListener
 			  numTip = new JTextField();
 			  numTip.setEditable(false);
 			  numTip.setBounds(480, 350, 55, 35);
+			  
+			  //帮助
+			 
 			  map.add(gameTip);   map.add(sureBuy);    map.add(abolishBuy);
 			  map.add(sureUseProp);       map.add(abolishUseProp);
 			  map.add(sureUpLevel);      map.add(abolishUpLevel);
@@ -468,8 +481,8 @@ public class rich_10  extends JFrame implements ActionListener
 			if(players[currentPlayerNum%playerNum.getPlayerNumber()].getToolBombs()==0&&players[currentPlayerNum%playerNum.getPlayerNumber()].getToolRobots()==0&&players[currentPlayerNum%playerNum.getPlayerNumber()].getToolRoadBlock()==0){
 				gameTip.setText("当前玩家回合已经结束，请下一位玩家掷色子");
 				//row.setVisible(true);
-				this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
 				currentPlayerNum += 1;
+				this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
 				if(players[currentPlayerNum%playerNum.getPlayerNumber()].getIsJump()==0){
 					row.setVisible(true);
 				}else{
@@ -626,11 +639,20 @@ public class rich_10  extends JFrame implements ActionListener
 				if(payed){
 					if(players[currentPlayerNum%playerNum.getPlayerNumber()].getToolBombs()==0&&players[currentPlayerNum%playerNum.getPlayerNumber()].getToolRobots()==0&&players[currentPlayerNum%playerNum.getPlayerNumber()].getToolRoadBlock()==0){
 						gameTip.setText("当前玩家回合已经结束，请下一位玩家掷色子");
-						row.setVisible(true);
-						
+					//	row.setVisible(true);						
 						currentPlayerNum += 1;
-						
 						this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
+						if(players[currentPlayerNum%playerNum.getPlayerNumber()].getIsJump()==0){
+							row.setVisible(true);
+						}else{
+							  gameTip.setText("当前玩家处于轮空状态，跳过当前回合!!!");
+							  players[currentPlayerNum%playerNum.getPlayerNumber()].setIsJump(players[currentPlayerNum%playerNum.getPlayerNumber()].getIsJump()-1);
+							  gameTip.setVisible(true);
+							  this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
+							  sureJump.setVisible(true);
+							  currentPlayerNum += 1;
+						   }
+						
 					}else{
 						gameTip.setText("是否使用道具？");
 						sureUseProp.setVisible(true);
@@ -784,7 +806,6 @@ public class rich_10  extends JFrame implements ActionListener
 				//row.setVisible(true);
 				currentPlayerNum += 1;
 				this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
-				this.setPlayerInfo(players[currentPlayerNum%playerNum.getPlayerNumber()]);
 				if(players[currentPlayerNum%playerNum.getPlayerNumber()].getIsJump()==0){
 					row.setVisible(true);
 				}else{
@@ -805,7 +826,7 @@ public class rich_10  extends JFrame implements ActionListener
 		}if(e.getActionCommand().equals("magicone")){//魔法屋的选择
 			System.out.println(playernumber);
 			int random=(int)Math.random()*playernumber;
-			players[random].setMoney((int)(players[random].getMoney()*0.8));
+			players[random].setMoney((int)(players[random].getMoney()*1.2));
 			gameTip.setText("玩家"+players[random].getName()+"增加20%的金钱");
 			Magicone.setVisible(false);
 			Magictwo.setVisible(false);
@@ -881,7 +902,6 @@ public class rich_10  extends JFrame implements ActionListener
       }
 		
 	}
-	
 	//绘制地图
 	public void drawMap(){
 		int x=100, y= 140;
@@ -1139,6 +1159,23 @@ public void payMoney(mapElements floor,Player p){
 		playernumber-=1;
 		p.setPoor(true);
 		gameTip.setText("玩家"+p.getName()+"已破产，退出游戏");
+		String newMap="";
+		for(int i=0;i<elements.length;i++)
+		{   
+			if(elements[i].getOwener()==p.getName())
+			{
+			elements[i].setOwener("");
+			elements[i].setLevel(0);
+			elements[i].setText("0");
+			elements[i].setForeground(Color.BLACK);
+			newMap+="0";
+			}
+			else
+			{
+				newMap+= mapEle.split("")[i];
+			} 
+		}
+		mapEle=newMap;
 		Player[] tempPlayers = new Player[playerNum.getPlayerNumber()-1];
 		int j =0;
 		for(int i=0;i<playerNum.getPlayerNumber();i++){
