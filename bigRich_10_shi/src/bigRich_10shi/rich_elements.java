@@ -78,7 +78,7 @@ class Player{
 	private String name;
 	private String nameCode;
 	private int location=0;
-	private int money=2000;
+	private int money=200;
 	private int points=200;
 	private boolean isPoor=false;
 	private int colorType = 0;
